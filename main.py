@@ -1,8 +1,8 @@
-from courbure.gauss import CourbureGauss
-from courbure.mean import CourbureMoyenne
+from courbure.gauss import gauss_curvature
+from courbure.mean import calculate_mean_curvature
 from courbure.max_curvature import CourbureMax
 from courbure.min_cruvature import CourbureMin
-from utils.visualize import visualize_curvature
+from utils.visualize import visualize_curvature, visualize_mean_curvature
 import trimesh
 
 def main():
@@ -10,6 +10,7 @@ def main():
     mesh_path = "meshes/cow.obj"
     print(f"Loading mesh from: {mesh_path}")
     mesh = trimesh.load(mesh_path)
+    points = mesh.vertices
 
     # Menu system
     while True:
@@ -22,14 +23,16 @@ def main():
         choix = input("Entrez votre choix (1-5): ")
 
         if choix == "1":
-            courbure_gauss = CourbureGauss.calculer(mesh)
-            print("Courbure de Gauss calculée.",courbure_gauss)
-            print("courbure gauss shape : ", courbure_gauss.shape)
-            visualize_curvature(mesh, courbure_gauss, title="Courbure de Gauss")
+            print("Calculating Gauss Curvature...")
+            gauss_curv = gauss_curvature(mesh, points)
+
+            # Visualize the results
+            print("Visualizing Gauss Curvature...")
+            visualize_curvature(mesh, gauss_curv, title="Gauss Curvature")
         elif choix == "2":
-            courbure_moyenne = CourbureMoyenne.calculer(mesh)
+            mean_curvature = calculate_mean_curvature(mesh)
             print("Courbure Moyenne calculée.")
-            visualize_curvature(mesh, courbure_moyenne, title="Courbure Moyenne")
+            visualize_mean_curvature(mesh, mean_curvature)
         elif choix == "3":
             courbure_gauss = CourbureGauss.calculer(mesh)
             courbure_moyenne = CourbureMoyenne.calculer(mesh)
