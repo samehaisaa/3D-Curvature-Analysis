@@ -15,6 +15,9 @@ def main():
     # Menu system
     while True:
         print("\n=== Choix des calculs de courbure ===")
+        print("\n=== TP2_2024_Sameh_Aissa>python main.py ===")
+
+        
         print("1. Calculer la courbure de Gauss")
         print("2. Calculer la courbure Moyenne")
         print("3. Calculer la courbure Maximale")
@@ -28,7 +31,7 @@ def main():
 
             # Visualize the results
             print("Visualizing Gauss Curvature...")
-            visualize_curvature(mesh, gauss_curv, title="Gauss Curvature")
+            visualize_curvature(mesh, gauss_curv, title="Courbure de Gauss")
         elif choix == "2":
             mean_curvature = calculate_mean_curvature(mesh)
             print("Courbure Moyenne calculée.")
