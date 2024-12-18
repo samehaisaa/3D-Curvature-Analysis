@@ -47,8 +47,7 @@ def visualize_mean_curvature(mesh, mean_curvature):
     - mean_curvature: A numpy array of mean curvature values for each vertex.
     """
     # Normalize the curvature values for visualization
-    normalized_curvature = (mean_curvature - mean_curvature.min()) / (mean_curvature.max() - mean_curvature.min())
-    
+    normalized_curvature = mean_curvature 
     # Map the curvature values to a colormap (you can adjust this as needed)
     colormap = plt.cm.viridis(normalized_curvature)
     
