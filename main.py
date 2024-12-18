@@ -37,16 +37,16 @@ def main():
             print("Courbure Moyenne calculée.")
             visualize_mean_curvature(mesh, mean_curvature)
         elif choix == "3":
-            courbure_gauss = CourbureGauss.calculer(mesh)
-            courbure_moyenne = CourbureMoyenne.calculer(mesh)
+            courbure_gauss = gauss_curvature(mesh, points)
+            courbure_moyenne = calculate_mean_curvature(mesh)
             courbure_max = CourbureMax.calculer(courbure_moyenne, courbure_gauss)
             print("Courbure Maximale calculée.")
             visualize_curvature(mesh, courbure_max, title="Courbure Maximale")
         elif choix == "4":
-            courbure_gauss = CourbureGauss.calculer(mesh)
-            courbure_moyenne = CourbureMoyenne.calculer(mesh)
+            courbure_gauss = gauss_curvature(mesh, points)
+            courbure_moyenne = calculate_mean_curvature(mesh)
             courbure_min = CourbureMin.calculer(courbure_moyenne, courbure_gauss)
-            print("Courbure Minimale calculée.")
+            print("Courbure Maximale calculée.")
             visualize_curvature(mesh, courbure_min, title="Courbure Minimale")
         elif choix == "5":
             print("Quitter le programme. À bientôt!")

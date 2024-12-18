@@ -2,7 +2,7 @@ import pyvista as pv
 import numpy as np
 import matplotlib.pyplot as plt  # Add this line if it's missing
 
-def visualize_curvature(mesh, curvature_values, title="Courbure"):
+def visualize_curvature(mesh, curvature_values, title):
     """
     Visualize curvature values on the 3D mesh using PyVista.
     :param mesh: Trimesh object
@@ -32,7 +32,7 @@ def visualize_curvature(mesh, curvature_values, title="Courbure"):
 
     # Create a plotter
     plotter = pv.Plotter()
-    plotter.add_mesh(pv_mesh, scalars=title, cmap="coolwarm", show_edges=True)
+    plotter.add_mesh(pv_mesh, scalars=title, cmap="viridis", show_edges=True)
     plotter.add_title(title, font_size=16)
     plotter.show()
 
@@ -47,12 +47,12 @@ def visualize_mean_curvature(mesh, mean_curvature):
     - mean_curvature: A numpy array of mean curvature values for each vertex.
     """
     # Normalize the curvature values for visualization
-    normalized_curvature = mean_curvature 
+    normalized_curvature = (mean_curvature - mean_curvature.min()) / (mean_curvature.max() - mean_curvature.min())
+    
     # Map the curvature values to a colormap (you can adjust this as needed)
-    colormap = plt.cm.viridis(normalized_curvature)
+    colormap = plt.cm.plasma(normalized_curvature)
     
     # Apply the colormap to the vertices
     mesh.visual.vertex_colors = (colormap[:, :3] * 255).astype(np.uint8)
-    
     # Show the mesh with curvature visualization
     mesh.show()
