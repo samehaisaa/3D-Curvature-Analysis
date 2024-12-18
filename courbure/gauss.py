@@ -1,42 +1,49 @@
 import numpy as np
 import trimesh
+from tqdm import tqdm  # Progress bar
 
 class CourbureGauss:
     @staticmethod
     def calculer(mesh):
         # Initialize the Gauss curvature array
         gauss_curvature = np.zeros(len(mesh.vertices))
+
+        # Precompute vertex normals and face areas
+        vertex_normals = mesh.vertex_normals
+        face_areas = mesh.area_faces
         
-        # Loop through each vertex and compute Gauss curvature
-        for i, vertex in enumerate(mesh.vertices):
-            # Get the neighboring faces of the current vertex
-            vertex_faces = mesh.vertex_faces[i]
-            if len(vertex_faces) < 2:
-                # Skip if not enough neighbors to calculate curvature
-                continue
+        # Loop through the faces to compute curvature
+        for i in tqdm(range(len(mesh.faces)), desc="Calculating Gauss Curvature", unit="face"):
+            face = mesh.faces[i]
+            # Get the three vertices of the face
+            v0, v1, v2 = mesh.vertices[face]
             
-            # Calculate the vertex normal
-            vertex_normal = mesh.vertex_normals[i]
+            # Compute the area of the face using the cross product of two edges
+            edge1 = v1 - v0
+            edge2 = v2 - v0
+            face_area = np.linalg.norm(np.cross(edge1, edge2)) / 2
             
-            # Compute the area of the surrounding faces
-            face_areas = [mesh.area_faces[face] for face in vertex_faces]
+            # Compute the normal of the face
+            face_normal = np.cross(edge1, edge2)
+            face_normal /= np.linalg.norm(face_normal)
             
-            # Calculate Gauss curvature based on angle defects between neighboring faces
-            angle_sum = 0
-            for face in vertex_faces:
-                # Get the three vertices of the face
-                face_vertices = mesh.vertices[mesh.faces[face]]
-                # Compute the angle defect (this is a simplified approach)
-                normal1 = mesh.face_normals[face]
-                for other_face in vertex_faces:
-                    if face != other_face:
-                        normal2 = mesh.face_normals[other_face]
-                        # Calculate angle between normals
-                        angle = np.arccos(np.clip(np.dot(normal1, normal2), -1.0, 1.0))
+            # Compute the angle defects for each vertex in the face
+            for j in range(3):
+                vertex = face[j]
+                # Get the neighboring faces for the current vertex
+                vertex_faces = mesh.vertex_faces[vertex]
+                
+                # Compute angle defect at the vertex (simplified method)
+                angle_sum = 0
+                for neighbor_face in vertex_faces:
+                    if neighbor_face != i:  # Ignore the current face
+                        neighbor_normal = mesh.face_normals[neighbor_face]
+                        # Compute the angle between face normals
+                        angle = np.arccos(np.clip(np.dot(face_normal, neighbor_normal), -1.0, 1.0))
                         angle_sum += angle
-            
-            # Compute the Gauss curvature by dividing the angle defect by the area of the Voronoi cell
-            # (area around the vertex)
-            gauss_curvature[i] = angle_sum / np.sum(face_areas)
-        
+                
+                # Store the Gauss curvature for the vertex
+                gauss_curvature[vertex] += angle_sum / face_area
+
         return gauss_curvature
+
